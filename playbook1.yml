@@ -1,0 +1,23 @@
+---
+
+- name: Build image and run container with ansible playbook 
+  hosts: localhost
+  tasks:
+
+  - name: Stop running container
+    command: docker stop laravel-container
+    ignore_errors: yes
+  
+  - name: Remove stopped container
+    command: docker rm laravel-container
+    ignore_errors: yes
+  
+  - name: Remove used image
+    command: docker rmi moaaz65/laravel-image
+    ignore_errors: yes
+    
+  - name: Build a new image
+    command: docker build -t moaaz65/laravel-image .
+  
+  - name: Push image to dockerhub
+    command: docker push moaaz65/laravel-image
