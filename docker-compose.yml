@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - 3306:3306
+    volumes:
+      - mysqldatadir:/var/lib/mysql
+  
+  php-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image: moaaz65/laravel-image
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 5000:80
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db
+    ports:
+      - 4000:80
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+
+volumes:
+  mysqldatadir:
