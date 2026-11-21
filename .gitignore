@@ -25,6 +25,17 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
 *.tfvars
-*.tfstate*
+*.tfvars.json
+*.tfplan
+crash.log
+crash.*.log
+
+# Keep dependency lock file
+!.terraform.lock.hcl
+
 *.pem
