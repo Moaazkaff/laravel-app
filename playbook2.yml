@@ -1,36 +1,26 @@
+
 ---
-
-- name: Manage Docker compose
+- name: Manage Laravel Docker Compose
   hosts: localhost
+
   tasks:
+    - name: Stop existing containers
+      command: docker compose down
+      args:
+        chdir: /var/lib/jenkins/workspace/Laravel-first-job
+      ignore_errors: yes
 
-  - name: Stop and remove containers
-    command: docker compose down 
-    ignore_errors: yes
+    - name: Build and start containers
+      command: docker compose up -d --build
+      args:
+        chdir: /var/lib/jenkins/workspace/Laravel-first-job
 
-  - name: remove image built with dockercompose
-    command: docker rmi moaaz65/laravel-app
-    ignore_errors: yes
+    - name: Wait for containers to start
+      command: docker compose ps
+      args:
+        chdir: /var/lib/jenkins/workspace/Laravel-first-job
 
-  - name: remove php-apache image
-    command: docker rmi php:8.3-apache
-    ignore_errors: yes
-
-  - name: remove mysql image
-    command: docker rmi mysql:8.0
-    ignore_errors: yes
-
-  - name: remove phpmyadmin image
-    command: docker rmi phpmyadmin/phpmyadmin
-    ignore_errors: yes
-
-  - name: build docker-compose
-    command: docker compose up -d 
-
-# # This task is to get into the apache container where the project file exist and run composer update command with non-interactive tty 
-  
-#   - name: Run composer update inside apache container
-#     command:  docker exec -i laravel-app bash -c "composer update"
-
-  - name: run the migrations
-    command: docker compose exec laravel-app php artisan migrate --force
+    - name: Run Laravel migrations
+      command: docker compose exec -T php-service php artisan migrate --force
+      args:
+        chdir: /var/lib/jenkins/workspace/Laravel-first-job
