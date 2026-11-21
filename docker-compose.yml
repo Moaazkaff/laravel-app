@@ -23,7 +23,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # image: moaaz65/laravel-image
+    image: moaaz65/laravel-image
+    container_name: laravel-app
     volumes:
       - .:/var/www/html
     ports:
