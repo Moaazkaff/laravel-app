@@ -37,8 +37,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
+# Install Laravel dependencies
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader
+
 COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
 
-RUN chown -R www-data:www-data /var/www/html &&  a2enmod rewrite
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache \
+    && a2enmod rewrite
+
 
 USER www-data
