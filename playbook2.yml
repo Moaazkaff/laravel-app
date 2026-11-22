@@ -6,21 +6,21 @@
   tasks:
     - name: Stop existing containers
       command: docker compose down
-      args:
-        chdir: /var/lib/jenkins/workspace/Laravel-first-job
+      # args:
+      #   chdir: /var/lib/jenkins/workspace/Laravel-first-job
       ignore_errors: yes
 
     - name: Build and start containers
       command: docker compose up -d --build
-      args:
-        chdir: /var/lib/jenkins/workspace/Laravel-first-job
+      # args:
+      #   chdir: /var/lib/jenkins/workspace/Laravel-first-job
 
     - name: Wait for containers to start
       command: docker compose ps
-      args:
-        chdir: /var/lib/jenkins/workspace/Laravel-first-job
+      # args:
+      #   chdir: /var/lib/jenkins/workspace/Laravel-first-job
 
     - name: Run Laravel migrations
       command: docker compose exec -T php-service php artisan migrate --force
-      args:
-        chdir: /var/lib/jenkins/workspace/Laravel-first-job
+      # args:
+      #   chdir: /var/lib/jenkins/workspace/Laravel-first-job
