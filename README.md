@@ -60,6 +60,8 @@ The Compose stack defines three services:
 
 Compose reads `DB_ROOT_PASSWORD`, `DB_USERNAME`, `DB_PASSWORD`, and `DB_DATABASE` for MySQL. The application container uses MySQL at `db:3306`.
 
+The checked-in `.env.example` is configured for SQLite. Before using Compose, set `DB_CONNECTION=mysql`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, and `DB_ROOT_PASSWORD` in the deployment `.env` file.
+
 The current Compose and Ansible configuration expects the checkout and `.env` file at `/var/lib/jenkins/workspace/laravel-app`. Use that Jenkins workspace for deployment, or update the hard-coded paths in `docker-compose.yml` and `playbook2.yml` before deploying from another location.
 
 ## Jenkins and Ansible deployment
