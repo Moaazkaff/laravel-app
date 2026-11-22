@@ -41,7 +41,7 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - /var/lib/jenkins/workspace/Laravel-first-job/.env
+      - /var/lib/jenkins/workspace/laravel-app/.env
   
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
