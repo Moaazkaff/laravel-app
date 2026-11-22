@@ -1,59 +1,76 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 13 application with registration, sign-in, email verification, password recovery, and profile management. The repository also includes a Docker, Jenkins, Ansible, and Terraform setup for deployment on AWS.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3 or later and Composer
+- Node.js and npm
+- SQLite for local development (the example environment uses SQLite)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Local development
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+From the repository root, run the Composer setup script. It installs PHP and JavaScript dependencies, creates `.env` when needed, generates the application key, runs migrations, and builds the frontend assets.
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer run setup
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Start the local development services with:
 
-## Contributing
+```bash
+composer run dev
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The app is served at `http://localhost:8000`. Adjust `.env` for your local database, mail, or other services as needed.
 
-## Code of Conduct
+Run the automated test suite with:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer test
+```
 
-## Security Vulnerabilities
+## Application features
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- Public welcome page and a verified-user dashboard
+- Registration, login, logout, email verification, password reset, and password confirmation
+- Profile editing, password changes, and account deletion
+- Blade views styled with Tailwind CSS and built with Vite
 
-## License
+## Repository layout
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# laravel-app
+| Path | Purpose |
+| --- | --- |
+| `app/` | Models, controllers, requests, and view components |
+| `routes/` | Web, authentication, and console routes |
+| `resources/` | Blade templates, CSS, and JavaScript |
+| `database/` | Migrations, factories, and seeders |
+| `tests/` | Feature and unit tests |
+| `Dockerfile`, `docker-compose.yml`, `vhost.conf` | Apache/PHP image and container services |
+| `Jenkinsfile`, `playbook1.yml`, `playbook2.yml` | Jenkins pipeline and Ansible deployment steps |
+| `terraform/` | AWS network, security group, EC2, and output configuration |
+
+## Docker deployment
+
+The Compose stack defines three services:
+
+- `db`: MySQL 8, exposed on port `3306`
+- `php-service`: the Laravel Apache container, exposed on port `5000`
+- `phpmyadmin`: exposed on port `4000`
+
+Compose reads `DB_ROOT_PASSWORD`, `DB_USERNAME`, `DB_PASSWORD`, and `DB_DATABASE` for MySQL. The application container uses MySQL at `db:3306`.
+
+The current Compose and Ansible configuration expects the checkout and `.env` file at `/var/lib/jenkins/workspace/laravel-app`. Use that Jenkins workspace for deployment, or update the hard-coded paths in `docker-compose.yml` and `playbook2.yml` before deploying from another location.
+
+## Jenkins and Ansible deployment
+
+The Jenkins pipeline uses a Jenkins username/password credential with the ID `dockerhub` to log in to Docker Hub. Its agent needs Docker, the Docker Compose plugin, and Ansible available.
+
+1. `playbook1.yml` builds the `moaaz65/laravel-image` image and pushes it to Docker Hub.
+2. `playbook2.yml` recreates the Compose services and runs Laravel database migrations.
+
+The deployment expects the Jenkins workspace path described above and a populated `.env` file there.
+
+## Terraform infrastructure
+
+The `terraform/` directory describes an AWS EC2 host, its VPC, subnet, and security group, and outputs the host's public IP. It uses the AWS provider and references an existing AMI and existing network resource IDs. Provide the required Terraform variables and AWS credentials, and verify those resource IDs and the AMI for your account and region before applying the configuration.
